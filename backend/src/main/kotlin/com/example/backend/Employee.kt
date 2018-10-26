@@ -12,3 +12,4 @@ data class Employee (
 ){
     @Id @GeneratedValue var id:Long = 0
 }
+

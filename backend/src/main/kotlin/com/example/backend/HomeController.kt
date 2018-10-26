@@ -8,3 +8,4 @@ class HomeController {
     @RequestMapping(value = ["/"])
     fun index() = "index"
 }
+

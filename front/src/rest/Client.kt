@@ -2,14 +2,31 @@ package rest
 
 import org.w3c.xhr.XMLHttpRequest
 
-
 class Client {
     var xhttp= XMLHttpRequest();
 
-    fun fetch(url:String, call: (String) -> Unit) {
-//        call(testtext) // Для тестов
+    fun fetch(url:String, header: String ="application/hal+json",
+              call: (String) -> Unit) {
         xhttp.open("GET", url, true);
-        xhttp.setRequestHeader("Accept", "application/hal+json" )
+        xhttp.setRequestHeader("Accept", header)
+        xhttp.onload = {
+            call(xhttp.responseText)
+        }
+        xhttp.send();
+    }
+
+    fun post(url:String, entity:String, call: (String) -> Unit = {}) {
+        xhttp.open("POST", url, true);
+        xhttp.setRequestHeader("Content-Type", "application/hal+json")
+        xhttp.onload = {
+            call(xhttp.responseText)
+        }
+        xhttp.send(entity);
+    }
+
+    fun delete(url:String, call: (String) -> Unit = {}){
+        xhttp.open("DELETE", url, true);
+        xhttp.setRequestHeader("Content-Type", "application/hal+json")
         xhttp.onload = {
             call(xhttp.responseText)
         }
@@ -17,29 +34,3 @@ class Client {
     }
 }
 
-val testtext = """
-{
-  "_embedded" : {
-    "employees" : [ {
-      "firstName" : "Frodo",
-      "lastName" : "Baggins",
-      "description" : "ring bearer",
-      "_links" : {
-        "self" : {
-          "href" : "http://localhost:8080/api/employees/1"
-        }
-      }
-    },
-    {
-      "firstName" : "Bilbo",
-      "lastName" : "Baggins",
-      "description" : "burglar",
-      "_links" : {
-        "self" : {
-          "href" : "http://localhost:8080/api/employees/2"
-        }
-      }
-    } ]
-  }
-}
-""".trimIndent()
